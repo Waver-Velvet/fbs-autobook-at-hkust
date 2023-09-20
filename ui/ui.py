@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, time
 
 import pandas as pd
 import streamlit as st
-from streamlit_option_menu import option_menu
+from streamlit_extras.grid import grid
 
 import fbs
 from main import prepare_logger
@@ -69,24 +69,19 @@ PAGES = [
     "Review and Confirm",
     "Book"
 ]
-with st.sidebar:
-    st.title("FBS AutoBook @ HKUST")
-    previous_pages = PAGES[:state['current_page'] + 1]
-    option = option_menu(
-        menu_title=None,
-        options=previous_pages,
-        icons=['dot' for _ in previous_pages],
-        default_index=state['current_page']
-    )
-    st.caption("You can go to previous pages by clicking them. ")
-    selected_page = PAGES.index(option)
-    if state['current_page'] != selected_page:
-        state.current_page = selected_page
-        st.experimental_rerun()
+
+if state.current_page > 0 and state.current_page != len(PAGES) - 1:
+    st.caption("Navigate to Previous Page(s)... ")
+    navigator = grid(len(PAGES))
+    for i, page in enumerate(PAGES[:state.current_page]):
+        if navigator.button(page, type='primary', use_container_width=True):
+            state.current_page = i
+            st.experimental_rerun()
 
 
 def render_welcome():
-    st.title("Welcome to FBS AutoBook @ HKUST!")
+    st.markdown("# Welcome to <br>"
+                "FBS AutoBook @ HKUST", unsafe_allow_html=True)
     st.error("**Disclaimer:** The use of *FBS AutoBook @ HKUST* **contradicts** the university's requirement for human input in facility bookings. "
              "This application is an **unofficial** tool and does **not** receive support from HKUST. "
              "By choosing to use this app, keep in mind that as you venture forth with care, consequences may lie in wait. "
@@ -207,12 +202,14 @@ def render_book():
     if not fbs.is_open() or not fbs.is_bookable(timeslot_date):
         begin, end = datetime.now(), max(fbs.open_time(), fbs.bookable_time_of(timeslot_date))
         remaining = timedelta(seconds=(end - datetime.now()).seconds)
-        progress_text = f"Waiting until the selected timeslot becomes bookable or FBS reopens ({end.isoformat()})...  Remaining: {remaining}"
+        progress_text = (f"Waiting until **the selected timeslots become bookable** or **FBS reopens** ({end.isoformat()})...  "
+                         f"**Remaining**: {remaining}")
         progress = st.progress(0, text=progress_text)
         while datetime.now() < end:
             remaining = timedelta(seconds=(end - datetime.now()).seconds)
             percentage = 1 - (end - datetime.now()) / (end - begin)
-            progress_text = f"Waiting until the selected timeslot becomes bookable or FBS reopens ({end.isoformat()})...  Remaining: {remaining}"
+            progress_text = (f"Waiting until **the selected timeslots become bookable** or **FBS reopens** ({end.isoformat()})...  "
+                             f"**Remaining**: {remaining}")
             progress.progress(percentage, text=progress_text)
             t.sleep(.1)
 
@@ -266,4 +263,5 @@ match state['current_page']:
         with st.empty().container():
             render_review()
     case 3:
-        render_book()
+        with st.empty().container():
+            render_book()

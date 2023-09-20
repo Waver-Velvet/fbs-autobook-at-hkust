@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "hkust-fbs-automation"
+name = "fbs-autobook-at-hkust"
 version = "0.5.0"
 description = "Auto book facilities through the HKUST FBS."
 authors = ["Poet <the_poet@ust.hk>"]
@@ -13,7 +13,6 @@ retry2 = "^0.9.5"
 decorator = "^5.1.1"
 streamlit = "^1.26.0"
 streamlit-extras = "^0.3.2"
-streamlit-option-menu = "^0.3.6"
 
 [tool.poetry.group.dev.dependencies]
 types-requests = "^2.31"
@@ -24,4 +23,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-hkust-fbs-automation = 'main:main'
+hkust-fbs-automation = 'streamlit:_main'
