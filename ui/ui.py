@@ -7,12 +7,11 @@ import streamlit as st
 from streamlit_extras.grid import grid
 
 import fbs
-from main import prepare_logger
+from setup import prepare_logger
 
 warnings.filterwarnings("ignore")
 
 
-@st.cache_resource
 def get_facilities():
     return pd.DataFrame(state.client.list_facilities())
 
@@ -78,6 +77,8 @@ if state.current_page > 0 and state.current_page != len(PAGES) - 1:
             state.current_page = i
             st.experimental_rerun()
 
+placeholder = st.empty()
+
 
 def render_welcome():
     st.markdown("# Welcome to <br>"
@@ -130,7 +131,7 @@ def render_choose():
             step=timedelta(hours=1),
         )
 
-        next = st.form_submit_button("Next")
+        next_page = st.form_submit_button("Next")
 
         state.facilities = get_facilities()
         state.facilities = state.facilities.set_index("id")
@@ -142,7 +143,7 @@ def render_choose():
             use_container_width=True,
         )
 
-        if next:
+        if next_page:
             state.facilities = facilities
             state.timeslot_date = timeslot_date
             state.timeslot_time_range = timeslot_time_range
@@ -151,8 +152,6 @@ def render_choose():
 
 
 def render_review():
-    print(state.timeslot_date)
-
     st.title("Review and Confirm")
     st.write("Take a moment to review your selected facilities. ")
     st.write("Upon confirmation, the system will automatically reserve all selected facilities for you.")
@@ -190,12 +189,17 @@ def render_review():
                 )
 
     if st.button("Confirm"):
-        state.current_page += 1
         state.require_refresh = True
+        state.current_page += 1
         st.experimental_rerun()
 
 
 def render_book():
+    if state.require_refresh:
+        state.require_refresh = False
+        placeholder.empty()
+        st.experimental_rerun()
+
     st.title("Book")
 
     timeslot_date = state.timeslot_date
@@ -260,8 +264,7 @@ match state['current_page']:
     case 1:
         render_choose()
     case 2:
-        with st.empty().container():
+        with placeholder.container():
             render_review()
     case 3:
-        with st.empty().container():
-            render_book()
+        render_book()

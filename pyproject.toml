@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fbs-autobook-at-hkust"
-version = "0.5.0"
+version = "1.0.1"
 description = "Auto book facilities through the HKUST FBS."
 authors = ["Poet <the_poet@ust.hk>"]
 packages = [{ include = "*.py" }]
@@ -23,4 +23,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-hkust-fbs-automation = 'streamlit:_main'
+fbs-autobook-at-hkust = 'main:main'
