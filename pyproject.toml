@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "fbs-autobook-at-hkust"
 version = "1.0.4"
-description = "Auto book facilities through the HKUST FBS."
+description = "FBS AutoBook @ HKUST is a Python & Streamlit app that automates booking facilities through the HKUST Facility Booking System (FBS)."
 authors = ["Poet <the_poet@ust.hk>"]
 packages = [{ include = "at_hkust" }]
 readme = "README.md"
