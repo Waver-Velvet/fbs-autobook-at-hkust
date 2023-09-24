@@ -75,7 +75,7 @@ if state.current_page > 0 and state.current_page != len(PAGES) - 1:
     for i, page in enumerate(PAGES[:state.current_page]):
         if navigator.button(page, type='primary', use_container_width=True):
             state.current_page = i
-            st.experimental_rerun()
+            st.rerun()
 
 placeholder = st.empty()
 
@@ -99,14 +99,14 @@ def render_welcome():
         if st.form_submit_button("Login"):
             state.client = fbs.Client(username, password)
             state.current_page += 1
-            st.experimental_rerun()
+            st.rerun()
 
     with st.form('login_by_token'):
         token = st.text_input("Login Token", state.client.token_str if state.client is not None else "")
         if st.form_submit_button("Login by Token"):
             state.client = fbs.Client(token=token)
             state.current_page += 1
-            st.experimental_rerun()
+            st.rerun()
 
 
 def render_choose():
@@ -139,6 +139,18 @@ def render_choose():
         state.facilities["book"] = False
         facilities = st.data_editor(
             state.facilities,
+            column_order=(
+                'id',
+                'location',
+                'name',
+                'book',
+            ),
+            column_config={
+                'id': st.column_config.Column("ID"),
+                'location': st.column_config.Column("Location"),
+                'name': st.column_config.Column("Name"),
+                'book': st.column_config.Column("Book"),
+            },
             height=(len(state.facilities) + 1) * 35 + 2,
             use_container_width=True,
         )
@@ -148,7 +160,7 @@ def render_choose():
             state.timeslot_date = timeslot_date
             state.timeslot_time_range = timeslot_time_range
             state.current_page += 1
-            st.experimental_rerun()
+            st.rerun()
 
 
 def render_review():
@@ -181,7 +193,8 @@ def render_review():
                     timeslot_data.style.apply(lambda row: ['background-color: lightgray' if row['status'] != 'Available' else '' for _ in row], axis=1),
                     column_config={
                         'date': st.column_config.Column("Date"),
-                        'start_time': st.column_config.Column("Start Time"),
+                        'status': st.column_config.Column("Status"),
+                        'time_range': st.column_config.Column("Time Range")
                     },
                     height=(len(timeslot_data) + 1) * 35 + 2,
                     use_container_width=True,
@@ -191,14 +204,14 @@ def render_review():
     if st.button("Confirm"):
         state.require_refresh = True
         state.current_page += 1
-        st.experimental_rerun()
+        st.rerun()
 
 
 def render_book():
     if state.require_refresh:
         state.require_refresh = False
         placeholder.empty()
-        st.experimental_rerun()
+        st.rerun()
 
     st.title("Book")
 

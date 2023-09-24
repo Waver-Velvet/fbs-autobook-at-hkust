@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fbs-autobook-at-hkust"
-version = "1.0.3"
+version = "1.0.4"
 description = "Auto book facilities through the HKUST FBS."
 authors = ["Poet <the_poet@ust.hk>"]
 packages = [{ include = "at_hkust" }]

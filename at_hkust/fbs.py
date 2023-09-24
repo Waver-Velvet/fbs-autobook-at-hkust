@@ -26,10 +26,6 @@ def sleep_until(target):
         return False
 
 
-def bookable_time_of(timeslot_date: date) -> datetime:
-    return datetime.combine(timeslot_date - timedelta(days=7), time.fromisoformat("08:00"))
-
-
 class Facility(NamedTuple):
     id: int
     name: str
@@ -48,10 +44,10 @@ class Timeslot(NamedTuple):
     status: str = "Available"
 
     def __str__(self) -> str:
-        return f"{self.start_time_str()}-{self.end_time_str()}"
+        return f"{self.__repr__()} ({self.status})"
 
     def __repr__(self) -> str:
-        return self.__str__()
+        return f"{self.start_time_str()}-{self.end_time_str()}"
 
     def date_str(self):
         return self.date.strftime("%Y-%m-%d")
